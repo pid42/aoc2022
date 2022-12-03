@@ -27,6 +27,19 @@ impl MatchResult {
     }
 }
 
+impl FromStr for MatchResult {
+    type Err = ();
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "X" => Ok(MatchResult::Loose),
+            "Y" => Ok(MatchResult::Draw),
+            "Z" => Ok(MatchResult::Win),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug)]
 enum Shape {
     Rock,
@@ -39,9 +52,9 @@ impl FromStr for Shape {
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
-            "A" | "X" => Ok(Shape::Rock),
-            "B" | "Y" => Ok(Shape::Paper),
-            "C" | "Z" => Ok(Shape::Scissors),
+            "A" => Ok(Shape::Rock),
+            "B" => Ok(Shape::Paper),
+            "C" => Ok(Shape::Scissors),
             _ => Err(()),
         }
     }
@@ -56,24 +69,44 @@ impl Shape {
         }
     }
 
-    fn play(&self, other: &Shape) -> MatchResult {
-        match self {
-            Shape::Rock => match other {
-                Shape::Rock => MatchResult::Draw,
-                Shape::Paper => MatchResult::Loose,
-                Shape::Scissors => MatchResult::Win,
-            },
-            Shape::Paper => match other {
-                Shape::Rock => MatchResult::Win,
-                Shape::Paper => MatchResult::Draw,
-                Shape::Scissors => MatchResult::Loose,
-            },
-            Shape::Scissors => match other {
-                Shape::Rock => MatchResult::Loose,
-                Shape::Paper => MatchResult::Win,
-                Shape::Scissors => MatchResult::Draw,
-            },
-        }
+    // fn play(&self, other: &Shape) -> MatchResult {
+    //     match self {
+    //         Shape::Rock => match other {
+    //             Shape::Rock => MatchResult::Draw,
+    //             Shape::Paper => MatchResult::Loose,
+    //             Shape::Scissors => MatchResult::Win,
+    //         },
+    //         Shape::Paper => match other {
+    //             Shape::Rock => MatchResult::Win,
+    //             Shape::Paper => MatchResult::Draw,
+    //             Shape::Scissors => MatchResult::Loose,
+    //         },
+    //         Shape::Scissors => match other {
+    //             Shape::Rock => MatchResult::Loose,
+    //             Shape::Paper => MatchResult::Win,
+    //             Shape::Scissors => MatchResult::Draw,
+    //         },
+    //     }
+    // }
+}
+
+fn my_move(opponent_shape: &Shape, wanted_result: &MatchResult) -> Shape {
+    match opponent_shape {
+        Shape::Rock => match wanted_result {
+            MatchResult::Win => Shape::Paper,
+            MatchResult::Draw => Shape::Rock,
+            MatchResult::Loose => Shape::Scissors,
+        },
+        Shape::Paper => match wanted_result {
+            MatchResult::Win => Shape::Scissors,
+            MatchResult::Draw => Shape::Paper,
+            MatchResult::Loose => Shape::Rock,
+        },
+        Shape::Scissors => match wanted_result {
+            MatchResult::Win => Shape::Rock,
+            MatchResult::Draw => Shape::Scissors,
+            MatchResult::Loose => Shape::Paper,
+        },
     }
 }
 
@@ -84,8 +117,8 @@ fn main() -> io::Result<()> {
         let line = line?;
         let line: Vec<&str> = line.split(' ').collect();
         let opponent = Shape::from_str(line[0]).unwrap();
-        let me = Shape::from_str(line[1]).unwrap();
-        let result = me.play(&opponent);
+        let wanted_result = MatchResult::from_str(line[1]).unwrap();
+        let me = my_move(&opponent, &wanted_result);
 
         println!(
             "line: {:?}({}) vs {:?}({}) => {:?}({})",
@@ -93,11 +126,11 @@ fn main() -> io::Result<()> {
             &opponent.points(),
             &me,
             &me.points(),
-            &result,
-            &result.points()
+            &wanted_result,
+            &wanted_result.points()
         );
 
-        points += me.points() + result.points();
+        points += me.points() + wanted_result.points();
     }
     println!("points: {points}");
 
