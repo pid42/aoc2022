@@ -8,26 +8,21 @@ const INPUT_FILE: &str = "input.txt";
 
 fn main() {
     let mut points = 0;
+    let mut elf_group: Vec<HashSet<char>> = Vec::with_capacity(3);
 
     for line in input_lines() {
         let line = line.unwrap();
-        let (compartment1, compartment2) = line.split_at(line.len() / 2);
-        // println!("compartment1: {compartment1} ==== compartment2: {compartment2}");
+        elf_group.push(line.chars().collect());
 
-        let mut set = HashSet::new();
-        let mut dups = HashSet::new();
+        if elf_group.len() == 3 {
+            let tmp: HashSet<&char> = elf_group[0].intersection(&elf_group[1]).collect();
+            let mut result = elf_group[2].clone();
+            result.retain(|i| tmp.contains(i));
+            // println!("result: {:?}", result);
+            assert!(result.len() == 1);
+            points += char_points(*result.iter().next().unwrap());
 
-        for char in compartment1.chars() {
-            set.insert(char);
-        }
-        for char in compartment2.chars() {
-            if set.contains(&char) {
-                dups.insert(char);
-            }
-        }
-
-        for char in dups {
-            points += char_points(char);
+            elf_group.clear();
         }
     }
 
