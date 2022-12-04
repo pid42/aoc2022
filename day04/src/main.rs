@@ -18,6 +18,10 @@ impl SectionRange {
     fn contains_section(&self, section: u32) -> bool {
         self.first <= section && self.last >= section
     }
+
+    fn overlaps(&self, section: &SectionRange) -> bool {
+        section.first <= self.last
+    }
 }
 
 impl FromStr for SectionRange {
@@ -42,16 +46,18 @@ fn main() -> io::Result<()> {
 
     for line in input_lines() {
         let line = line?;
-        let (elf1, elf2) = match &(line
+        let mut parsed_line = line
             .split(',')
             .map(|s| SectionRange::from_str(s).unwrap())
-            .collect::<Vec<_>>())[..]
-        {
+            .collect::<Vec<_>>();
+        parsed_line.sort_unstable_by(|a, b| a.first.cmp(&b.first));
+
+        let (elf1, elf2) = match &(parsed_line)[..] {
             &[first, second] => (first, second),
             _ => unreachable!(),
         };
 
-        if elf1.contains(&elf2) || elf2.contains(&elf1) {
+        if elf1.overlaps(&elf2) {
             counter += 1;
         }
     }
