@@ -57,13 +57,18 @@ fn main() -> io::Result<()> {
 
     println!("{:?}", commands);
 
+    let mut crane_mover_9001 = Vec::new();
+
     for command in commands {
         {
             let mut from_stack = stacks.get(&command.from).unwrap().borrow_mut();
             let mut to_stack = stacks.get(&command.to).unwrap().borrow_mut();
 
             for _ in 0..command.count {
-                to_stack.push_back(from_stack.pop_back().unwrap());
+                crane_mover_9001.push(from_stack.pop_back().unwrap());
+            }
+            for _ in 0..crane_mover_9001.len() {
+                to_stack.push_back(crane_mover_9001.pop().unwrap())
             }
         }
         print_stacks(&stacks);
