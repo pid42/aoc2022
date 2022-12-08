@@ -9,10 +9,12 @@ struct SectionRange {
 }
 
 impl SectionRange {
+    #[allow(dead_code)]
     fn contains(&self, section: &SectionRange) -> bool {
         self.first <= section.first && self.last >= section.last
     }
 
+    #[allow(dead_code)]
     fn contains_section(&self, section: u32) -> bool {
         self.first <= section && self.last >= section
     }

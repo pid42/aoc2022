@@ -24,7 +24,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let mut max = 0;
-    for i in (1..=3) {
+    for i in 1..=3 {
         let v = elves.pop().unwrap();
         println!("{i} = {v}");
         max += v
