@@ -1,8 +1,6 @@
-use std::{
-    collections::HashSet,
-    fs::File,
-    io::{self, BufRead, BufReader},
-};
+use std::collections::HashSet;
+
+use util::input_lines;
 
 const INPUT_FILE: &str = "input.txt";
 
@@ -10,7 +8,7 @@ fn main() {
     let mut points = 0;
     let mut elf_group: Vec<HashSet<char>> = Vec::with_capacity(3);
 
-    for line in input_lines() {
+    for line in input_lines(INPUT_FILE) {
         let line = line.unwrap();
         elf_group.push(line.chars().collect());
 
@@ -35,9 +33,4 @@ fn char_points(c: char) -> u32 {
     } else {
         (c as u32) - 38
     }
-}
-
-fn input_lines() -> io::Lines<BufReader<File>> {
-    let file = File::open(INPUT_FILE).unwrap();
-    BufReader::new(file).lines()
 }

@@ -1,17 +1,15 @@
-use std::{
-    collections::BinaryHeap,
-    fs::File,
-    io::{BufRead, BufReader},
-};
+use std::collections::BinaryHeap;
+
+use util::input_lines;
+
+const INPUT_FILE: &str = "input.txt";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut calories = 0;
 
-    let input_file = "input.txt";
     let mut elves = BinaryHeap::new();
-    let file = File::open(input_file)?;
 
-    for line in BufReader::new(file).lines() {
+    for line in input_lines(INPUT_FILE) {
         let line = line?;
         let v = line.trim();
 

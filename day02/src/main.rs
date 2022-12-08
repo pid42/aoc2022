@@ -1,8 +1,6 @@
-use std::{
-    fs::File,
-    io::{self, BufRead, BufReader},
-    str::FromStr,
-};
+use std::{io, str::FromStr};
+
+use util::input_lines;
 
 const INPUT_FILE: &str = "input.txt";
 
@@ -113,7 +111,7 @@ fn my_move(opponent_shape: &Shape, wanted_result: &MatchResult) -> Shape {
 fn main() -> io::Result<()> {
     let mut points = 0;
 
-    for line in input_lines() {
+    for line in input_lines(INPUT_FILE) {
         let line = line?;
         let line: Vec<&str> = line.split(' ').collect();
         let opponent = Shape::from_str(line[0]).unwrap();
@@ -135,9 +133,4 @@ fn main() -> io::Result<()> {
     println!("points: {points}");
 
     Ok(())
-}
-
-fn input_lines() -> io::Lines<BufReader<File>> {
-    let file = File::open(INPUT_FILE).unwrap();
-    BufReader::new(file).lines()
 }

@@ -1,9 +1,10 @@
 use std::{
     cell::RefCell,
     collections::{BTreeMap, VecDeque},
-    fs::File,
-    io::{self, BufRead, BufReader, Read},
+    io::{self, Read},
 };
+
+use util::input_lines;
 
 const INPUT_FILE: &str = "input.txt";
 
@@ -36,7 +37,7 @@ fn main() -> io::Result<()> {
 
     let mut commands = Vec::new();
 
-    for line in input_lines() {
+    for line in input_lines(INPUT_FILE) {
         let line = line?;
         if line.starts_with(' ') || line.starts_with('[') {
             let ret = parse_box_line(&line);
@@ -128,9 +129,4 @@ fn print_stacks(stacks: &BTreeMap<usize, RefCell<Stack>>) {
         println!();
     }
     println!();
-}
-
-fn input_lines() -> io::Lines<BufReader<File>> {
-    let file = File::open(INPUT_FILE).unwrap();
-    BufReader::new(file).lines()
 }

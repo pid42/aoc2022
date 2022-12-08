@@ -1,8 +1,6 @@
-use std::{
-    fs::File,
-    io::{self, BufRead, BufReader},
-    str::FromStr,
-};
+use std::{io, str::FromStr};
+
+use util::input_lines;
 
 #[derive(Copy, Clone)]
 struct SectionRange {
@@ -44,7 +42,7 @@ const INPUT_FILE: &str = "input.txt";
 fn main() -> io::Result<()> {
     let mut counter = 0;
 
-    for line in input_lines() {
+    for line in input_lines(INPUT_FILE) {
         let line = line?;
         let mut parsed_line = line
             .split(',')
@@ -64,9 +62,4 @@ fn main() -> io::Result<()> {
 
     println!("counter: {counter}");
     Ok(())
-}
-
-fn input_lines() -> io::Lines<BufReader<File>> {
-    let file = File::open(INPUT_FILE).unwrap();
-    BufReader::new(file).lines()
 }
