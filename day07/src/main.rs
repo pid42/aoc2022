@@ -154,24 +154,32 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    let max_size: u64 = 100000;
-    let size: u64 = entries
+    let total_disk_space = 70000000;
+    let needed_space = 30000000;
+    let root_dir_size = entries[root_dir].size(&entries);
+    let free_space = total_disk_space - root_dir_size;
+    dbg!(free_space);
+
+    let mut dirs: Vec<_> = entries
         .0
         .iter()
         .filter_map(|e| match e {
-            Entry::Dir(_) => {
+            Entry::Dir(data) => {
                 let size = e.size(&entries);
-                if size <= max_size {
-                    Some(size)
-                } else {
-                    None
-                }
+                Some((data.name.clone(), size))
             }
             _ => None,
         })
-        .sum();
+        .collect();
+    dirs.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+    dbg!(&dirs);
 
-    dbg!(size);
+    for (dir_name, dir_size) in dirs {
+        if (free_space + dir_size) >= needed_space {
+            println!("{dir_name}, {dir_size}");
+            break;
+        }
+    }
 
     Ok(())
 }
